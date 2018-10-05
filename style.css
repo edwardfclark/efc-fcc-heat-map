@@ -3,8 +3,26 @@ div#tooltip {
     text-align: left;			
     padding: 0 10px;				
     font: 12px sans-serif;		
-    background: lightsteelblue;	
+    background: darkslategrey;	
+    color: white;
     border: 0px;		
     border-radius: 8px;			
-    pointer-events: none;			
+    pointer-events: none;
+    text-align: center;
+    width: 100px;
+    height: 65px;
+}
+
+#tooltip::after {
+    content: '';
+	position: absolute;
+	bottom: 0;
+	left: 50%;
+	width: 0;
+	height: 0;
+	border: 10px solid transparent;
+	border-top-color: darkslategray;
+	border-bottom: 0;
+	margin-left: -10px;
+	margin-bottom: -10px;
 }
