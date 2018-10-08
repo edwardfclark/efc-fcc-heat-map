@@ -1,3 +1,51 @@
+//Color interpolation functions.
+
+//interpolate() returns a color value midway between the two provided color values. The degree of change depends on the factor.
+//This function is called inside the getGradient function.
+function interpolate(color1, color2, factor) {
+    if (arguments.length < 3) {
+        factor = 0.5;
+    }
+
+    let result = color1.slice();
+
+    for (let i = 0; i < 3; i++) {
+        result[i] = Math.round(result[i] + factor * (color2[i] - color1[i]));
+    }
+
+    return result;
+
+}
+
+//getGradient() takes three args - c1 and c2 are colors in rgb() format, and steps is the number of intermediary colors desired.
+//The function returns a 2D array. Each value in the array is another array of three numbers, designed to fit into rgb() values.
+function getGradient(c1, c2, steps) {
+    let stepFactor = 1 / (steps - 1), interpolatedArray = [];
+    c1 = c1.match(/\d+/g).map(Number);
+    c2 = c2.match(/\d+/g).map(Number);
+
+    for (let i = 0; i < steps; i++) {
+        interpolatedArray.push(interpolate(c1, c2, stepFactor * i));
+    }
+
+    return interpolatedArray;
+
+}
+
+//twoStepGradient() takes four args - firstColor, midColor, lastColor, and steps.
+//It calls twoStepGradient twice and returns a gradient that interpolates from firstColor to midColor, and then from midColor to lastColor.
+//In this way, we can go from blue to yellow to red, skipping intermediary colors that don't have semantic meaning with regard to temperature.
+function twoStepGradient(firstColor, midColor, lastColor, steps) {
+
+    let arr1 = getGradient(firstColor, midColor, steps);
+    let arr2 = getGradient(midColor, lastColor, steps);
+    let result = [...arr1, ...arr2];
+    return result;
+
+}
+
+
+
 document.addEventListener("DOMContentLoaded", function() {
 
     let request = new XMLHttpRequest();
@@ -86,4 +134,7 @@ document.addEventListener("DOMContentLoaded", function() {
         //This is for testing, delete later.
         document.getElementById("test").innerHTML = d3.max(dataset.monthlyVariance, (d) => d.variance) + dataset.baseTemperature;
     }
+
+    console.log(getGradient("rgb(26, 67, 204)", "rgb(204, 31, 26)", 50));
+
 });
