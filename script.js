@@ -8,13 +8,10 @@ function interpolate(color1, color2, factor) {
     }
 
     let result = color1.slice();
-
     for (let i = 0; i < 3; i++) {
         result[i] = Math.round(result[i] + factor * (color2[i] - color1[i]));
     }
-
     return result;
-
 }
 
 //getGradient() takes three args - c1 and c2 are colors in rgb() format, and steps is the number of intermediary colors desired.
@@ -27,9 +24,7 @@ function getGradient(c1, c2, steps) {
     for (let i = 0; i < steps; i++) {
         interpolatedArray.push(interpolate(c1, c2, stepFactor * i));
     }
-
     return interpolatedArray;
-
 }
 
 //twoStepGradient() takes four args - firstColor, midColor, lastColor, and steps.
@@ -41,9 +36,7 @@ function twoStepGradient(firstColor, midColor, lastColor, steps) {
     let arr2 = getGradient(midColor, lastColor, steps);
     let result = [...arr1, ...arr2];
     return result;
-
 }
-
 
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -54,16 +47,23 @@ document.addEventListener("DOMContentLoaded", function() {
 
     request.onload = function() {
         const dataset = JSON.parse(request.responseText);
-
         const months = {1:"January", 2:"February", 3:"March", 4:"April", 5:"May", 6:"June", 7:"July", 8:"August", 9:"September", 10:"October", 11:"November", 12: "December"};
+        
+        //blue, yellow, red, and gradientSteps are used as args for the twoStepGradient function.
+        const blue = "rgb(0, 0, 255)";
+        const yellow = "rgb(255, 253, 224)";
+        const red = "rgb(255, 0, 0)";
+        const gradientSteps = 100;
+        const colors = twoStepGradient(blue, yellow, red, gradientSteps).map((d) => `rgb(${d.join(", ")})`);
 
         //The pickColor() function takes a datapoint and calculates the color based on that input. It uses the d3.scaleLinear() functionality to map the input to an array value.
         function pickColor(datapoint) {
             
-            let colors = ["#313695", "#4575b4", "#74add1", "#abd9e9", "#e0f3f8", "#ffffbf", "#fee090", "#fdae61", "#f46d43", "#d73027", "#a50026"];
+            //let colors = ["#313695", "#4575b4", "#74add1", "#abd9e9", "#e0f3f8", "#ffffbf", "#fee090", "#fdae61", "#f46d43", "#d73027", "#a50026"];
+            
             const max = d3.max(dataset.monthlyVariance, (d) => d.variance);
             const min = d3.min(dataset.monthlyVariance, (d) => d.variance);
-            const colorScale = d3.scaleLinear().domain([min, max]).range([0, 10]);
+            const colorScale = d3.scaleLinear().domain([min, max]).range([0, colors.length-1]);
 
             return colors[Math.round(colorScale(datapoint.variance))];
             
@@ -135,6 +135,6 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById("test").innerHTML = d3.max(dataset.monthlyVariance, (d) => d.variance) + dataset.baseTemperature;
     }
 
-    console.log(getGradient("rgb(26, 67, 204)", "rgb(204, 31, 26)", 50));
-
+    //console.log(getGradient("rgb(26, 67, 204)", "rgb(204, 31, 26)", 50));
+    
 });
