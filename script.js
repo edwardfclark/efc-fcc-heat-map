@@ -38,7 +38,7 @@ function twoStepGradient(firstColor, midColor, lastColor, steps) {
     return result;
 }
 
-
+//SVG creation with D3 library.
 document.addEventListener("DOMContentLoaded", function() {
 
     let request = new XMLHttpRequest();
@@ -58,8 +58,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
         //The pickColor() function takes a datapoint and calculates the color based on that input. It uses the d3.scaleLinear() functionality to map the input to an array value.
         function pickColor(datapoint) {
-            
-            //let colors = ["#313695", "#4575b4", "#74add1", "#abd9e9", "#e0f3f8", "#ffffbf", "#fee090", "#fdae61", "#f46d43", "#d73027", "#a50026"];
             
             const max = d3.max(dataset.monthlyVariance, (d) => d.variance);
             const min = d3.min(dataset.monthlyVariance, (d) => d.variance);
@@ -84,6 +82,22 @@ document.addEventListener("DOMContentLoaded", function() {
         const width = 1500;
         const height = 750;
         const padding = {top: 25, right: 75, bottom: 75, left: 75};
+
+        //Constants for defining the structure of the legend.
+        const legendRectHeight = 10;
+        const legendY = height - 35;
+        const legendRectWidth = 3;
+        const legendWidth = (colors.length - 1) * legendRectWidth;
+        const baseTemp = dataset.baseTemperature;
+        const minVariance = d3.min(dataset.monthlyVariance, (d) => d.variance);
+        const maxVariance = d3.max(dataset.monthlyVariance, (d) => d.variance);
+        const legendScale = d3.scaleLinear().domain([minVariance, maxVariance]).range([padding.left, padding.left+legendWidth]);
+        const legendAxis = d3.axisBottom(legendScale).tickFormat((d) => {
+            return d + baseTemp + "C";
+        });
+        console.log(baseTemp);
+
+        
         const svg = d3.select("body").append("svg").attr("width", width).attr("height", height);
 
         //Constants for defining the scales and the axes.
@@ -130,6 +144,26 @@ document.addEventListener("DOMContentLoaded", function() {
         .attr("transform", "translate(0," + (height-padding.bottom) + ")")
         .attr("id", "x-axis")
         .call(xAxis);
+
+        //Legend.
+        svg.append("g").attr("id", "legend");
+        const legend = d3.select("#legend");
+
+        legend.selectAll("rect")
+        .data(colors)
+        .enter()
+        .append("rect")
+        .attr("x", (d, i) => padding.left + i*legendRectWidth)
+        .attr("y", legendY)
+        .attr("width", legendRectWidth)
+        .attr("height", legendRectHeight)
+        .attr("fill", (d) => d);
+
+        //Legend's axis.
+        legend.append("g")
+        .attr("transform", "translate(0," + (legendY+legendRectHeight) + ")")
+        .attr("id", "legend-axis")
+        .call(legendAxis);
 
         //This is for testing, delete later.
         document.getElementById("test").innerHTML = d3.max(dataset.monthlyVariance, (d) => d.variance) + dataset.baseTemperature;
