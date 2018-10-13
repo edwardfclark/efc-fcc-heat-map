@@ -1,3 +1,9 @@
+svg {
+    display: block;
+    margin: 0 auto;
+    margin-top: 100px;
+}
+
 div#tooltip {	
     position: absolute;			
     text-align: left;			
@@ -25,4 +31,13 @@ div#tooltip {
 	border-bottom: 0;
 	margin-left: -10px;
 	margin-bottom: -10px;
+}
+
+#title {
+    font-size: 25px;
+    font-family: sans-serif;
+}
+
+#sub-title {
+    font-family: sans-serif;
 }

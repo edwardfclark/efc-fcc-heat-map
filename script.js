@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function() {
         //Constants for defining the structure of the SVG.
         const width = 1500;
         const height = 750;
-        const padding = {top: 25, right: 75, bottom: 75, left: 75};
+        const padding = {top: 75, right: 75, bottom: 75, left: 75};
         
         //Constants for defining the structure of the legend.
         const legendRectHeight = 10;
@@ -54,10 +54,16 @@ document.addEventListener("DOMContentLoaded", function() {
         const yAxis = d3.axisLeft(yScale).tickFormat((d) => months[d]);
         const xAxis = d3.axisBottom(xScale).ticks(26).tickFormat(d3.format("d"));
         
+
+        /* FUNCTIONS */
+        
+        //pickColor() is called for every datapoint. 
+        //It returns a color in rgb() format, referencing the colors array generated with the twoStepGradient() function.
         function pickColor(datapoint) {
             return colors[Math.round(colorScale(datapoint.variance))];
         }
         
+        //generateTooltip() is called inside the mouseover event in the D3 Appends section.
         function generateTooltip(d) {
             let html = "<p>";
             html += d.year + " - " + months[d.month] + "<br />";
@@ -66,9 +72,6 @@ document.addEventListener("DOMContentLoaded", function() {
             html += "</p>";
             return html;
         }
-        
-
-        /* FUNCTIONS */
         
         //interpolate() returns a color value midway between the two provided color values. The degree of change depends on the factor.
         //This function is called inside the getGradient function.
@@ -164,6 +167,20 @@ document.addEventListener("DOMContentLoaded", function() {
         .call(legendAxis);
 
         //Text labels.
+
+        svg.append("text")
+        .attr("id", "title")
+        .attr("x", width/2)
+        .attr("y", padding.top/2)
+        .attr("text-anchor", "middle")
+        .text("Monthly Global Land-Surface Temperature");
+
+        svg.append("text")
+        .attr("id", "sub-title")
+        .attr("x", width/2)
+        .attr("y", padding.top/2 + 20)
+        .attr("text-anchor", "middle")
+        .text("1753 - 2015: base temperature 8.66 C");
 
         //This is for testing, delete later.
         //document.getElementById("test").innerHTML = d3.max(dataset.monthlyVariance, (d) => d.variance) + dataset.baseTemperature;
