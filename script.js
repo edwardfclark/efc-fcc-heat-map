@@ -118,7 +118,11 @@ document.addEventListener("DOMContentLoaded", function() {
         .data(dataset.monthlyVariance)
         .enter()
         .append("rect")
+        .attr("class", "cell")
         .attr("x", (d) => xScale(d.year))
+        .attr("data-month", (d) => months[d.month])
+        .attr("data-year", (d) => d.year)
+        .attr("data-temp", (d) => dataset.baseTemperature + d.variance)
         .attr("y", (d) => yScale(d.month-0.5)) 
         .attr("width", xScale(2015) - xScale(2014))
         .attr("height", yScale(2) - yScale(1))
@@ -128,7 +132,7 @@ document.addEventListener("DOMContentLoaded", function() {
             div.html(generateTooltip(d))
             .style("left", (d3.event.pageX)-60+"px")
             .style("top", (d3.event.pageY)-75+"px")
-            .attr("data-year", "PLACEHOLDER");
+            .attr("data-year", d.year);
         })
         .on("mouseout", (d) => {
             div.transition().duration(200).style("opacity", 0);
@@ -176,7 +180,7 @@ document.addEventListener("DOMContentLoaded", function() {
         .text("Monthly Global Land-Surface Temperature");
 
         svg.append("text")
-        .attr("id", "sub-title")
+        .attr("id", "description")
         .attr("x", width/2)
         .attr("y", padding.top/2 + 20)
         .attr("text-anchor", "middle")
